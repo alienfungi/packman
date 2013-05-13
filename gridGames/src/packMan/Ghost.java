@@ -75,7 +75,7 @@ public class Ghost extends PackPerson {
         default:
       }
       if(isLegal(move, dir)) {
-        getQueue().push(move);
+        getQueue().add(move);
         done = true;
       } else {
         if(scared) { // Scared ghost
@@ -116,7 +116,7 @@ public class Ghost extends PackPerson {
       int b = coordToIndex()[packMan().getLocation(1)][packMan().getLocation(2)];
       aStar().setEndpoints(a, b);
       int[] soln = aStar().findSolution();
-      getQueue().push(new int[] {
+      getQueue().add(new int[] {
         getLocation(0),
         locations()[soln[1]][0],
         locations()[soln[1]][1]
@@ -131,7 +131,7 @@ public class Ghost extends PackPerson {
       aStar().setEndpoints(a, b);
       int[] soln = aStar().findSolution();
       for(int i = 1; i < soln.length; ++i) {
-        getQueue().push(new int[] {
+        getQueue().add(new int[] {
           getLocation(0),
           locations()[soln[i]][0],
           locations()[soln[i]][1]
@@ -155,7 +155,7 @@ public class Ghost extends PackPerson {
       }
       ++i;
     }
-    getQueue().push(move);
+    getQueue().add(move);
     return;
   }
 
@@ -183,7 +183,7 @@ public class Ghost extends PackPerson {
     }
     for(int j = 1; j < move.length; ++j)
       move[j] = locations()[temp][j - 1];
-    getQueue().push(move);
+    getQueue().add(move);
     return;
   }
   

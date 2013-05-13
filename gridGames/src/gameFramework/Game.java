@@ -1,6 +1,8 @@
 package gameFramework;
 
 import java.awt.Color;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public abstract class Game {
   // Variables
@@ -15,7 +17,7 @@ public abstract class Game {
   
   // Constructors
   public Game() {
-    queue = new Queue<Person>();
+    queue = new LinkedList<Person>();
   }
 
   // Accessors

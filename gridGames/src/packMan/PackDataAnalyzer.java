@@ -1,13 +1,15 @@
 package packMan;
 
-import gameFramework.*;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Iterator;
 
 public class PackDataAnalyzer {
   private Queue<PackData> queue;
 
   // Constructors
   public PackDataAnalyzer() {
-    queue = new Queue<PackData>();
+    queue = new LinkedList<PackData>();
   }
 
   // Accessors
@@ -27,13 +29,13 @@ public class PackDataAnalyzer {
     double mean = 0;
     int total = 0;
     int count = 0;
-    QueueIterator<PackData> iterator = queue.getIterator();
-    while(!iterator.atEnd()) {
-      if(iterator.getCurrent().data.isWin()) {
-        total += iterator.getCurrent().data.getTurnsTaken();
+    Iterator<PackData> iterator = queue.iterator();
+    while(iterator.hasNext()) {
+      PackData current = iterator.next();
+      if(current.isWin()) {
+        total += current.getTurnsTaken();
         count++;
       }
-      iterator.nextNode();
     }
     if(count != 0)
       mean = (double)total / (double)count;
@@ -44,13 +46,13 @@ public class PackDataAnalyzer {
     double mean = 0;
     int total = 0;
     int count = 0;
-    QueueIterator<PackData> iterator = queue.getIterator();
-    while(!iterator.atEnd()) {
-      if(!iterator.getCurrent().data.isWin()) {
-        total += iterator.getCurrent().data.getTurnsTaken();
+    Iterator<PackData> iterator = queue.iterator();
+    while(iterator.hasNext()) {
+      PackData current = iterator.next();
+      if(!current.isWin()) {
+        total += current.getTurnsTaken();
         count++;
       }
-      iterator.nextNode();
     }
     if(count != 0)
       mean = (double)total / (double)count;
@@ -61,11 +63,10 @@ public class PackDataAnalyzer {
     double mean = 0;
     int total = 0;
     int count = 0;
-    QueueIterator<PackData> iterator = queue.getIterator();
-    while(!iterator.atEnd()) {
-      total += iterator.getCurrent().data.getPelletsRemaining();
+    Iterator<PackData> iterator = queue.iterator();
+    while(iterator.hasNext()) {
+      total += iterator.next().getPelletsRemaining();
       count++;
-      iterator.nextNode();
     }
     if(count != 0)
       mean = (double)total / (double)count;
@@ -74,32 +75,30 @@ public class PackDataAnalyzer {
 
   public int getGamesPlayed() {
     int gamesPlayed = 0;
-    QueueIterator<PackData> iterator = queue.getIterator();
-    while(!iterator.atEnd()) {
+    Iterator<PackData> iterator = queue.iterator();
+    while(iterator.hasNext()) {
       gamesPlayed++;
-      iterator.nextNode();
+      iterator.next();
     }
     return gamesPlayed;
   }
 
   public int getWinTotal() {
     int winTotal = 0;
-    QueueIterator<PackData> iterator = queue.getIterator();
-    while(!iterator.atEnd()) {
-      if(iterator.getCurrent().data.isWin())
+    Iterator<PackData> iterator = queue.iterator();
+    while(iterator.hasNext()) {
+      if(iterator.next().isWin())
         winTotal++;
-      iterator.nextNode();
     }
     return winTotal;
   }
 
   public int getLossTotal() {
     int lossTotal = 0;
-    QueueIterator<PackData> iterator = queue.getIterator();
-    while(!iterator.atEnd()) {
-      if(!iterator.getCurrent().data.isWin())
+    Iterator<PackData> iterator = queue.iterator();
+    while(iterator.hasNext()) {
+      if(!iterator.next().isWin())
         lossTotal++;
-      iterator.nextNode();
     }
     return lossTotal;
   }
@@ -108,11 +107,10 @@ public class PackDataAnalyzer {
     double mean = 0;
     int total = 0;
     int count = 0;
-    QueueIterator<PackData> iterator = queue.getIterator();
-    while(!iterator.atEnd()) {
-      total += iterator.getCurrent().data.getLivesRemaining();
+    Iterator<PackData> iterator = queue.iterator();
+    while(iterator.hasNext()) {
+      total += iterator.next().getLivesRemaining();
       count++;
-      iterator.nextNode();
     }
     if(count != 0)
       mean = (double)total / (double)count;
@@ -133,6 +131,6 @@ public class PackDataAnalyzer {
                    int spawnRate) {
     PackData temp = new PackData(turnsTaken, pelletsRemaining, livesRemaining,
                                  spawnRate);
-    queue.push(temp);
+    queue.add(temp);
   }
 }

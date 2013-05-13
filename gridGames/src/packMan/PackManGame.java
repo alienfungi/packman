@@ -1,11 +1,12 @@
 package packMan;
 
 import gameFramework.*;
-import gameFramework.Queue;
-import gameFramework.Map;
 import zaneAI.*;
 import java.awt.*; // Color
 import java.awt.event.*;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import javax.swing.*;
 
 public class PackManGame extends Game implements KeyListener {
@@ -16,10 +17,10 @@ public class PackManGame extends Game implements KeyListener {
   private final int DEFAULT_SCALE = 30;
   private final int SPAWN_RATE = 50;
   private final int SUPER_PELLET_DURATION = 100;
-  private final int DEFAULT_TURN_FREQUENCY = 500; // milliseconds
+  private final int DEFAULT_TURN_FREQUENCY = 400; // milliseconds
   private Entity packSpawner;
   private Entity ghostSpawner;
-  private Queue<Person> spawnQueue = new Queue<Person>();
+  private Queue<Person> spawnQueue = new LinkedList<Person>();
   private PackMan packMan = new PackMan(new int[] {1, 0, 0}, this);
   private Ghost[] ghostArray;
   private JFrame menu;
@@ -152,8 +153,8 @@ public class PackManGame extends Game implements KeyListener {
     int locationSize = 0;
     int k = 0;
     int z = 0;
-    spawnQueue.purge();
-    setQueue(new Queue<Person>());
+    spawnQueue = new LinkedList<Person>();
+    setQueue(new LinkedList<Person>());
     for(int i = 0; i < mapLayout[selectedMap].length; ++i) {
       for(int j = 0; j < mapLayout[selectedMap][0].length; ++j) {
         switch(mapLayout[selectedMap][i][j]) {
@@ -195,12 +196,12 @@ public class PackManGame extends Game implements KeyListener {
         }
       }
     }
-    getQueue().push(packMan);
+    getQueue().add(packMan);
     map.setEntity(packMan, packMan.getLocation());
     for(int i = 0; i < ghostArray.length; ++i) {
-      getQueue().push(ghostArray[i]);
+      getQueue().add(ghostArray[i]);
       map.setEntity(ghostArray[i], ghostArray[i].getLocation());
-      spawnQueue.push(ghostArray[i]);
+      spawnQueue.add(ghostArray[i]);
     }
 
     // Initialize and populate locations list and index list
@@ -247,7 +248,7 @@ public class PackManGame extends Game implements KeyListener {
   /** Reset All Ghosts */
   private void resetGhosts() {
     spawnMod = time % SPAWN_RATE;
-    spawnQueue.purge();
+    spawnQueue = new LinkedList<Person>();
     for(int i = 0; i < ghostArray.length; i++) {
       resetGhost(ghostArray[i]);
     }
@@ -260,20 +261,20 @@ public class PackManGame extends Game implements KeyListener {
     } catch(Exception ex) { } // Can throw irrelevant exception if new game
     ghost.reset();
     getPlace().getMap().setEntity(ghost, ghost.getLocation());
-    spawnQueue.push(ghost);
+    spawnQueue.add(ghost);
   }
 
   /** Spawn Ghost */
   private void spawnGhost() {
     if(!spawnQueue.isEmpty()) {
       if((time - spawnMod) % SPAWN_RATE == 0) {
-        Person ghost = spawnQueue.pop();
+        Person ghost = spawnQueue.remove();
         ghost.setDirection(-1);
         int adj = adjacency[coordToIndex[ghostSpawner.getLocation(1)]
           [ghostSpawner.getLocation(2)]][0];
         int[] move = {ghost.getLocation(0), locations[adj][0],
           locations[adj][1]};
-        ghost.getQueue().push(move);
+        ghost.getQueue().add(move);
       }
     }
   }
@@ -378,7 +379,7 @@ public class PackManGame extends Game implements KeyListener {
     superCount = SUPER_PELLET_DURATION;
     for(int i = 0; i < ghostArray.length; i++) {
       ghostArray[i].setScared(true);
-      ghostArray[i].getQueue().purge();
+      ghostArray[i].getQueue().clear();
     }
   }
 
@@ -422,7 +423,7 @@ public class PackManGame extends Game implements KeyListener {
         ghostBox.addItemListener(new ItemListener() {
           public void itemStateChanged(ItemEvent e) {
             ghostArray[k].setType(ghostBox.getSelectedIndex());
-            ghostArray[k].getQueue().purge();
+            ghostArray[k].getQueue().clear();
           }
         });
         contentPane.add(ghostBox);

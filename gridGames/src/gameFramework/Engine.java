@@ -1,6 +1,7 @@
 package gameFramework;
 
 import java.util.Date;
+import java.util.Iterator;
 
 public class Engine implements Runnable {
   private boolean alive = false;
@@ -45,17 +46,17 @@ public class Engine implements Runnable {
 
       // IF NOT PAUSED
       if(!paused) {
-        QueueIterator<Person> iterator = game.getQueue().getIterator();
-        while(!iterator.atEnd()) {
-          Person current = iterator.getCurrent().data;
+        Iterator<Person> iterator = game.getQueue().iterator();
+        while(iterator.hasNext()) {
+          Person current = iterator.next();
           if(current.isReady(tickFraction)) {
-            int[] moveTo = current.getQueue().pop();
+            int[] moveTo = current.getQueue().remove();
             game.getPlace().getMap().setEntity(null, current.getLocation());
             game.getPlace().getMap().setEntity(current, moveTo);
             current.setLocation(moveTo);
             if(game.checkMap() != 0) break;
           }
-          iterator.nextNode();
+//          iterator.nextNode();
         }
       } // END "IF NOT PAUSED"
       

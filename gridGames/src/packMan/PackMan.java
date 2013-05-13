@@ -41,7 +41,7 @@ public class PackMan extends PackPerson {
         default:
       }
       if(isLegal(move, dir)) {
-        getQueue().push(move);
+        getQueue().add(move);
         done = true;
         if(dir != 0) mouthDir = dir;
         if(temp == 0)

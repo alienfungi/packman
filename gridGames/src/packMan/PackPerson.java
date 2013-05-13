@@ -30,7 +30,7 @@ public class PackPerson extends Person {
     setDirection(0);
     setShift(0);
     setLocation(spawn);
-    getQueue().purge();
+    getQueue().clear();
   }
   
   /** Handle edge wrap and return true for a legal move */

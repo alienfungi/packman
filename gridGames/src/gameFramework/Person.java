@@ -1,13 +1,15 @@
 package gameFramework;
 
 import java.awt.*;
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class Person extends Entity {
   // Constants
   private final static Color DEFAULT_COLOR = Color.WHITE;
   
   // Variables
-  private Queue<int[]> queue = new Queue<int[]>();
+  private Queue<int[]> queue = new LinkedList<int[]>();
   private int direction = 0;
   private double speed = 1.0;
   private double shift = 0;
@@ -28,7 +30,7 @@ public class Person extends Entity {
   public Person(int[] location) { this(location, DEFAULT_COLOR); }
 
   // Mutators
-  public void setActionQueue(Queue<int[]> queue) { this.queue = queue; }
+  public void setQueue(Queue<int[]> queue) { this.queue = queue; }
 
   public void setDirection(int direction) { this.direction = direction; }
   
