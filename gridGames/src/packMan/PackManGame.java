@@ -143,6 +143,11 @@ public class PackManGame extends Game implements KeyListener {
 
   /** Reset Map */
   private void resetMap() {
+    if(getWindow() != null) {
+      getWindow().call("post_score", new String[]{"0"});
+      getWindow().call("post_lives", new String[]{"3"});
+    }
+    
     Map map = new Map3D(mapLayout[selectedMap][0].length,
       mapLayout[selectedMap].length, 2 + ghostAI.length);
     setPlace(new Place(map));
@@ -289,11 +294,9 @@ public class PackManGame extends Game implements KeyListener {
   }
 
   /** Heart and soul of the game */
-  public int checkMap() {
+  public int checkMap() {   
     if(isWin()) {
-      JOptionPane.showMessageDialog(null, "Congratulations!  Completed in " +
-        time + " turns.\n" + lifeCount + " lives remaining.", "LEVEL COMPLETE",
-        JOptionPane.INFORMATION_MESSAGE);
+      saveScore();
       analyzer.push(this);
       setPaused(true);
       resetMap();
@@ -301,21 +304,41 @@ public class PackManGame extends Game implements KeyListener {
       resetGhosts();
       return 1;
     }
+    
+    if(getWindow() != null)
+        getWindow().call("post_score",
+          new String[]{Integer.toString(packMan.getScore())});
+    
     ++time;
     spawnGhost();
     if(isDead(packMan.getLocation())) {
       setPaused(true);
+      packMan.augmentScore(-250);
       System.out.println("DEAD");
       --lifeCount;
+      
+      if(getWindow() != null) {
+          getWindow().call("post_lives",
+            new String[]{Integer.toString(lifeCount)});
+          getWindow().call("post_score",
+            new String[]{Integer.toString(packMan.getScore())});
+      }
+      
       if(lifeCount <= 0) {
-        JOptionPane.showMessageDialog(null, pelletCount + " pellets remaining",
-          "GAME OVER", JOptionPane.WARNING_MESSAGE);
+//        if(getWindow() != null)
+//          getWindow().call("post_score",
+//            new String[]{Integer.toString(packMan.getScore())});
+
+        saveScore();
         analyzer.push(this);
         resetMap();
       } else {
         resetPackMan();
         resetGhosts();
       }
+      if(getWindow() != null)
+          getWindow().call("post_score",
+            new String[]{Integer.toString(packMan.getScore())});
       return -1;
     }
     else {
@@ -327,6 +350,25 @@ public class PackManGame extends Game implements KeyListener {
       }
     }
     return 0;
+  }
+  
+  private void saveScore() {
+	String score = Integer.toString(packMan.getScore());
+	String message = "<html><table>" +
+					 "<tr><td>Final Score:</td><td>"       + score        + "</td></tr>" +
+					 "<tr><td>Pellets remaining:</td><td>" + pelletCount  + "</td></tr>" +
+					 "<tr><td>Lives remaining:</td><td>"   + lifeCount    + "</td></tr>" +
+					 "</table>";
+					 
+	if(getWindow() != null) {
+	  message += "</br><p>Please input your name to save your score:</p></html>";
+	  String name = JOptionPane.showInputDialog(null, message, "Game Over", JOptionPane.DEFAULT_OPTION);
+	  getWindow().call("post_score", new String[] { score });
+	  getWindow().call("save_score", new String[] { score, name });
+	} else {
+	  message += "</html>";
+	  JOptionPane.showMessageDialog(null, message, "Game Over", JOptionPane.DEFAULT_OPTION);
+	}
   }
 
   /** Check for death of packman and ghosts */
@@ -340,6 +382,7 @@ public class PackManGame extends Game implements KeyListener {
       Ghost ghost = (Ghost)map.getEntity();
       if(ghost != null) {
         if(ghost.isScared()) {
+          packMan.augmentScore(100);
           resetGhost(ghost);
           if(spawnQueue.isEmpty()) {
             spawnMod = time % SPAWN_RATE;
@@ -364,9 +407,11 @@ public class PackManGame extends Game implements KeyListener {
       enableSuperMode();
     }
     if(floor.isPellet()) {
+      packMan.augmentScore(10);
       floor.setPellet(false);
       --pelletCount;
       if(pelletCount == 0) {
+        packMan.augmentScore(1000);
         System.out.println("WIN");
         return true;
       }

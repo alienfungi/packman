@@ -10,14 +10,23 @@ public class PackMan extends PackPerson {
   // Variables
   private int packDir = 0;
   private int mouthDir = 0;
+  private int score = 0;
   
   // Constructors
   PackMan(int location[], PackManGame game) {
     super(location, DEFAULT_COLOR, game);
   }
   
-  // Private Methods
+  // Public methods
+  public int getScore() { return score; }
   
+  // Package private methods
+  void augmentScore(int amount) {
+    score += amount;
+    if(score < 0) score = 0;
+  }
+  
+  // Private Methods
   public void update() {
     int temp = 0;
     boolean done = false;

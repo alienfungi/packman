@@ -4,6 +4,7 @@ import gameFramework.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import netscape.javascript.*; // add plugin.jar (from java dir) to eclipse classpath
 
 public class PackApplet extends JApplet implements MouseListener {
   /**
@@ -21,6 +22,14 @@ public class PackApplet extends JApplet implements MouseListener {
   public void init() {
     setLayout(new BorderLayout());
     game = (Game) new PackManGame();
+    
+    // give the game access to javascript methods
+    try {
+        game.setWindow(JSObject.getWindow(this));
+    } catch(Exception ex) { // if not run in browser
+        game.setWindow(null);
+    }
+    
     display = new Display(game);
     display.setPreferredSize(new Dimension(
       game.getPlace().getMap().getSize(2) * game.getScale(),
@@ -40,6 +49,7 @@ public class PackApplet extends JApplet implements MouseListener {
     engine = new Engine(game, display);
     engineThread = new Thread(engine);
     engineThread.start();
+    requestFocus();
     System.out.println("applet start");
   }
   

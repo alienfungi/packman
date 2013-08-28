@@ -11,6 +11,7 @@ public class PackPerson extends Person {
   // Variables
   private static PackManGame game;
   private int[] spawn;
+  private int turnCount = 0;
   
   // Constructors
   PackPerson(int[] location, PackManGame game) {
@@ -32,6 +33,14 @@ public class PackPerson extends Person {
     setLocation(spawn);
     getQueue().clear();
   }
+  
+  @Override // overriding parent to increment turnCount on each call
+  public boolean isReady(double tickFraction) {
+      boolean ready = super.isReady(tickFraction);
+      if(ready) turnCount++;
+      return ready;
+  }
+  public int getTurnCount() { return turnCount; }
   
   /** Handle edge wrap and return true for a legal move */
   boolean isLegal(int[] move, int dir) {

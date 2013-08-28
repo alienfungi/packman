@@ -3,6 +3,7 @@ package gameFramework;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.Queue;
+import netscape.javascript.*;
 
 public abstract class Game {
   // Variables
@@ -14,6 +15,7 @@ public abstract class Game {
   private int width;
   private int height;
   private int scale;
+  private JSObject window;
   
   // Constructors
   public Game() {
@@ -30,6 +32,8 @@ public abstract class Game {
   public final int getScale() { return scale; }
   public final int getTurnFrequency() { return turnFrequency; }
   public abstract int checkMap();
+  protected final JSObject getWindow() { return window; }
+
   
   // Mutators
   protected final void setPlace(Place place) { this.place = place; }
@@ -42,4 +46,5 @@ public abstract class Game {
   protected final void setTurnFrequency(int turnFrequency) {
       this.turnFrequency = turnFrequency;
   }
+  public final void setWindow(JSObject window) { this.window = window; }
 }
